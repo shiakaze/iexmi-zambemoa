@@ -13,6 +13,7 @@ public class Card : JayObject
 			if (selected) {
 				SelectedPosition = ObjectTransform.position;
 			}
+			collider.enabled = selected;
 		}
 	}
 
@@ -39,7 +40,7 @@ public class Card : JayObject
 	void Update ()
 	{
 		if (Selected) {
-			ObjectTransform.position = Cursor.GetCursorWorldPosition (SelectedPosition.z);
+			ObjectTransform.position = Cursor.GetCursorWorldPosition (SelectedPosition.z - Camera.main.transform.position.z);
 		}
 	}
 
@@ -50,12 +51,19 @@ public class Card : JayObject
 		if (Selected == false && evnt.Contains ("Notification", "Target")) {
 			Focused = (((GameObject)evnt ["Target"]) == gameObject);
 		}
+
+		if (Selected == true && evnt.Contains ("Notification", "Target")) {
+			GameObject target = (GameObject)evnt ["Target"];
+		}
+
 		if (evnt.Contains ("Notification", "Select")) {
 			Selected = Focused;
 		}
 		if (evnt.Contains ("Notification") && ((string)evnt ["Notification"]) == "Deselect") {
 			Selected = false;
 		}
+
+
 
 		#endregion
 	}
