@@ -45,6 +45,8 @@ public class Cursor : MonoBehaviour
 
 		if (Input.GetMouseButtonDown (0)) {
 			RaiseCursorSelectEvent (target);
+		} else if (Input.GetMouseButtonUp (0)) {
+			RaiseCursorDeselectEvent ();
 		}
 	}
 
@@ -61,6 +63,9 @@ public class Cursor : MonoBehaviour
 		notice ["Select"] = target;
 		CustomEventStream.Instance.Broadcast (notice, CursorChannelName);
 	}
-
-
+	private void RaiseCursorDeselectEvent ()
+	{
+		NotificationEvent notice = new NotificationEvent ("Deselect");
+		CustomEventStream.Instance.Broadcast (notice, CursorChannelName);
+	}
 }

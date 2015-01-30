@@ -11,7 +11,7 @@ public class Card : JayObject
 		set {
 			selected = value;
 			if (selected) {
-				print (SelectedPosition.z);
+				SelectedPosition = ObjectTransform.position;
 			}
 		}
 	}
@@ -27,7 +27,7 @@ public class Card : JayObject
 		}
 	}
 
-	public readonly Vector3 SelectedPosition = new Vector3 ();
+	public Vector3 SelectedPosition;
 
 	// Use this for initialization
 	void Start ()
@@ -52,6 +52,9 @@ public class Card : JayObject
 		}
 		if (evnt.Contains ("Notification", "Select")) {
 			Selected = Focused;
+		}
+		if (evnt.Contains ("Notification") && ((string)evnt ["Notification"]) == "Deselect") {
+			Selected = false;
 		}
 
 		#endregion

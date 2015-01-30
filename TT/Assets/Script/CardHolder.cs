@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(Collider))]
 public class CardHolder : JayObject
 {
 	public float HandWidth;
@@ -14,5 +15,26 @@ public class CardHolder : JayObject
 			cards [i].Position = Position + new Vector3 (i * (HandWidth / max), 0, i);
 			cards [i].name = name + i;
 		}
+
+		collider.enabled = false;
+		CustomEventStream.Instance.Subscribe (CustomEventHandler, Cursor.CursorChannelName);
 	}
+
+	// Update is called once per frame
+	#region implemented abstract members of JayObject
+	
+	protected override void CustomEventHandler (CustomEvent evnt)
+	{
+		if (evnt.Contains ("Notification", "Select")) {
+			collider.enabled = true;
+		}
+		if (evnt.Contains ("Notification") && ((string)evnt ["Notification"]) == "Deselect") {
+			collider.enabled = false;
+
+		}
+		
+		#endregion
+	}
+
+
 }
