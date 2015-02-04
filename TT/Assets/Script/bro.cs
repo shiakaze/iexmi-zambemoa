@@ -1,5 +1,12 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
+
+public enum BroPriorityAttackType
+{
+	PlayerCharacter,
+	FastestBroFirst,
+	SlowestBroFirst
+}
 
 public class Bro : MonoBehaviour
 {
@@ -17,7 +24,7 @@ public class Bro : MonoBehaviour
 	/// id identifies the message recipient
 	/// TODO: need to figure out a way to automatically do this and maybe have a hash function for these guys
 	/// </summary>
-	/// <value>The I.</value>
+	/// <value>The Id.</value>
 	public int Id {
 		get { return id; }
 		set { id = value;}
@@ -73,15 +80,24 @@ public class Bro : MonoBehaviour
 	{
 		CustomEventStream.Instance.Subscribe (new CustomEventHandler (BroEventHandler), "Bro");
 	}
-
+	
 	public void BroEventHandler (CustomEvent ce)
 	{
 
 		if ((string)ce ["Type"] == "Action" && (string)ce ["Action"] == "Damage") {
 			if ((int)ce ["TargetId"] == id) {
-				OPness -= (int)ce ["DamageValue"];
+				damage((int)ce["DamageValue"])
 			}
 		}
 	}
 	#endregion
+	#region helper methods
+
+	private void damage(int damageValue) {
+		OPness -= damageValue
+	}
+	#endregion
 }
+
+
+
