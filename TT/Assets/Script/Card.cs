@@ -54,6 +54,10 @@ public class Card : JayObject
 
 		if (Selected == true && evnt.Contains ("Notification", "Target")) {
 			GameObject target = (GameObject)evnt ["Target"];
+			CardHolder holder = target.GetComponent<CardHolder> ();
+			if (holder != null) {
+
+			}
 		}
 
 		if (evnt.Contains ("Notification", "Select")) {
