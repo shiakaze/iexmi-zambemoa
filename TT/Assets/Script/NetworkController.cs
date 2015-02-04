@@ -3,6 +3,11 @@ using System.Collections;
 
 public class NetworkController : MonoBehaviour
 {
+
+	#region constants
+	private const string DefaultNetworkChannel = "Network";
+
+	#endregion
 	#region private members
 
 	private CustomEventStream CES;
@@ -28,12 +33,12 @@ public class NetworkController : MonoBehaviour
 		Network.Connect (ip, port);
 	}
 	//send a message to all connected players
-	public void SendAll (CustomEvent evnt, string channel)
+	public void SendAll (CustomEvent evnt, string channel = DefaultNetworkChannel)
 	{
 		networkView.RPC ("NetMessage", RPCMode.All, channel, evnt);
 	}
 	//send a message to all other connected players
-	public void SendOthers (CustomEvent evnt, string channel)
+	public void SendOthers (CustomEvent evnt, string channel = DefaultNetworkChannel)
 	{
 		networkView.RPC ("NetMessage", RPCMode.Others, channel, evnt);
 	}
