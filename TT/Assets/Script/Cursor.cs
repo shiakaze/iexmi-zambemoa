@@ -67,5 +67,6 @@ public class Cursor : MonoBehaviour
 	{
 		NotificationEvent notice = new NotificationEvent ("Deselect");
 		CustomEventStream.Instance.Broadcast (notice, CursorChannelName);
+		print ("deselected");
 	}
 }

@@ -7,7 +7,7 @@ public class CardHolder : JayObject
 {
 	public float HandWidth;
 	private List<Card> cards;
-
+	
 	// Use this for initialization
 	void Start ()
 	{
@@ -16,7 +16,7 @@ public class CardHolder : JayObject
 		collider.enabled = false;
 		CustomEventStream.Instance.Subscribe (CustomEventHandler, Cursor.CursorChannelName);
 	}
-
+	
 	private void OrganizeCards ()
 	{
 		for (int i = 0, max = cards.Count; i < max; ++i) {
@@ -24,15 +24,15 @@ public class CardHolder : JayObject
 			cards [i].name = name + i;
 		}
 	}
-
+	
 	public void InsertCard (Card c)
 	{
 		print ("insert: " + c.name);
 		cards.Add (c);
 		OrganizeCards ();
 	}
-
-
+	
+	
 	// Update is called once per frame
 	#region implemented abstract members of JayObject
 	
@@ -47,6 +47,6 @@ public class CardHolder : JayObject
 		
 		#endregion
 	}
-
-
+	
+	
 }
