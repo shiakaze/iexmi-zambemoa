@@ -57,7 +57,6 @@
      <Compile Include="Assets\Script\JayObject.cs" />
      <Compile Include="Assets\Script\NetworkController.cs" />
      <Compile Include="Assets\Script\NetworkScript.cs" />
-     <Compile Include="Assets\Script\RevertObject.cs" />
      <None Include="Assets\Shader\TexturedDiffuseTypeBlack.shader" />
      <None Include="Assets\Shader\TexturedDiffuseTypeWhite.shader" />
  <Reference Include="UnityEngine.UI">

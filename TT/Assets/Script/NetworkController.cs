@@ -34,7 +34,7 @@ public class NetworkController : MonoBehaviour
 		NetworkConnectionError nce = Host();
 		if(nce == NetworkConnectionError.CreateSocketOrThreadFailure){
 			Debug.Log("host failed; assuming already exists. connecting");
-			Connect("127.0.0.1");
+			Connect("192.168.0.103");
 		} else {
 			Debug.Log("success");
 		}
