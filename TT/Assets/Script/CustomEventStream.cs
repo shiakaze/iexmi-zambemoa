@@ -26,8 +26,54 @@ public class CustomEvent : Dictionary<string, object>
 				return false;
 			}
 		}
-
 		return true;
+	}
+	/// <summary>
+	/// convert the string to a custom event.
+	/// </summary>
+	/// <returns>The custom event.</returns>
+	/// <param name="str">string to convert.</param>
+	public static CustomEvent FromString (string str)
+	{
+		int strindex = 0;
+		char now = str [strindex];
+		StringBuilder sb = new StringBuilder ();
+		CustomEvent ce = new CustomEvent ("Unknown");
+		string key = null;
+
+		while (now != ']') {
+			if (now == ';') {
+				ce [key] = sb.ToString ();
+				sb = new StringBuilder ();
+			} else if (now == ':') {
+				key = sb.ToString ();
+				sb = new StringBuilder ();
+			} else {
+				sb.Append (str [strindex]);
+			}
+			now = str [++strindex];
+		}
+		return ce;
+	}
+	/// <summary>
+	/// Connvert the event to a string
+	/// : to split key value pair
+	/// ; to denotate the end of the key value pair
+	/// ] to denotate the end of the string
+	/// </summary>
+	/// <returns>The string in the format of "key:value;key:value]"</returns>
+	/// <param name="ce">custom event to convert.</param>
+	public static string ToString (CustomEvent ce)
+	{
+		StringBuilder sb = new StringBuilder ();
+		foreach (KeyValuePair<string,object>kvp in ce) {
+			sb.Append (kvp.Key);
+			sb.Append (':');
+			sb.Append (kvp.Value);
+			sb.Append (';');
+		}
+		sb.Append ("]");
+		return sb.ToString ();
 	}
 }
 
@@ -67,7 +113,6 @@ public class NotificationEvent : CustomEvent
 	}
 }
 
-
 public delegate void CustomEventHandler (CustomEvent evnt);
 
 public class CustomEventStream : MonoBehaviour
@@ -75,7 +120,6 @@ public class CustomEventStream : MonoBehaviour
 	public static CustomEventStream Instance;
 	public bool LogEvents = true;
 	private Dictionary<string, CustomEventHandler> Channels;
-
 	private const string DefaultChannel = "Main";
 
 	private void Awake ()
@@ -152,9 +196,6 @@ public class CustomEventStream : MonoBehaviour
 			return true;
 		}
 	}
-
-
-
 
 	public bool Unsubscribe (CustomEventHandler handler, string channelName = DefaultChannel)
 	{

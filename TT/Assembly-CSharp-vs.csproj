@@ -46,6 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Script\Bro.cs" />
      <Compile Include="Assets\Script\Card.cs" />
      <Compile Include="Assets\Script\CardHolder.cs" />
      <Compile Include="Assets\Script\ChildIndexer.cs" />
@@ -57,7 +58,6 @@
      <Compile Include="Assets\Script\NetworkController.cs" />
      <Compile Include="Assets\Script\NetworkScript.cs" />
      <Compile Include="Assets\Script\RevertObject.cs" />
-     <Compile Include="Assets\Script\bro.cs" />
      <None Include="Assets\Shader\TexturedDiffuseTypeBlack.shader" />
      <None Include="Assets\Shader\TexturedDiffuseTypeWhite.shader" />
  <Reference Include="UnityEngine.UI">

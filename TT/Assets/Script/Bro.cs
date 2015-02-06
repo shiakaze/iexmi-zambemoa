@@ -1,12 +1,5 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
-
-public enum BroPriorityAttackType
-{
-	PlayerCharacter,
-	FastestBroFirst,
-	SlowestBroFirst
-}
 
 public class Bro : MonoBehaviour
 {
@@ -84,8 +77,8 @@ public class Bro : MonoBehaviour
 	public void BroEventHandler (CustomEvent ce)
 	{
 
-		if ("Action".Equals(ce ["Type"]) && "Damage".Equals(ce ["Action"])) {
-			if (id.Equals (ce ["TargetId"])) {
+		if ((string)ce ["Type"] == "Action" && (string)ce ["Action"] == "Damage") {
+			if ((int)ce ["TargetId"] == id) {
 				damage ((int)ce ["DamageValue"]);
 			}
 		}
@@ -99,6 +92,3 @@ public class Bro : MonoBehaviour
 	}
 	#endregion
 }
-
-
-

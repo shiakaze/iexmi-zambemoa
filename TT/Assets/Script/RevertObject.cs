@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
 using System.Collections;
 
@@ -51,3 +52,4 @@ public class RevertObject : EditorWindow
 	}
 
 }
+#endif
