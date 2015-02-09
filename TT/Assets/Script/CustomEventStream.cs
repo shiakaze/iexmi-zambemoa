@@ -212,7 +212,6 @@ public class CustomEventStream : MonoBehaviour
 			Channels [name] = null;
 		}
 	}
-
 	public void CloseChannel (string name)
 	{
 		if (Channels.ContainsKey (name)) {

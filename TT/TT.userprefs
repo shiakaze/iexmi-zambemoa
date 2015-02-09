@@ -1,17 +1,13 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\NetworkController.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\CustomEventStream.cs">
     <Files>
-      <File FileName="Assets\Script\NetworkController.cs" Line="9" Column="39" />
-      <File FileName="Assets\Script\Bro.cs" Line="89" Column="38" />
-      <File FileName="Assets\Script\DESTINY_CUBE.cs" Line="13" Column="92" />
-      <File FileName="Assets\Script\CustomEventStream.cs" Line="39" Column="29" />
+      <File FileName="Assets\Script\NetworkController.cs" Line="43" Column="24" />
+      <File FileName="Assets\Script\CustomEventStream.cs" Line="161" Column="71" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="C:\Users\Twilight Sparkle\TTCG\TT\Assets\Script\CardHolder.cs" line="30" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>
