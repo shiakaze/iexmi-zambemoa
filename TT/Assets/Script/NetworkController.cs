@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Runtime.Serialization;
 
 public class NetworkController : MonoBehaviour
 {
 
 	#region constants
-	private const string DefaultNetworkChannel = "Network";
+	public const string DefaultNetworkOutChannel = "NetworkOut";
+	public const string DefaultNetworkInChannel = "NetworkIn";
 	private const string DefaultIp = "127.0.0.1";
 	private const int DefaultPort = 6900;
 
@@ -16,29 +18,42 @@ public class NetworkController : MonoBehaviour
 	private string lastIp = DefaultIp;
 	private int lastPort = DefaultPort;
 	private CustomEventStream CES;
+
+	private System.Xml.Serialization.XmlSerializer xmlSerializer =
+		new System.Xml.Serialization.XmlSerializer (
+			typeof(CustomEventMessage),
+			new System.Type[] {
+				typeof(CustomEvent),
+				typeof(ActionEvent),
+				typeof(NotificationEvent)
+			}
+		);
 	#endregion
 
 	#region methods
 
-//	void Update() {
-//		float horiz = Input.GetAxis("Horizontal");
-//		if (horiz > 0){
-//			Debug.Log("telling other guy to kill the cube of destiny");
-//			SendOthers(new CustomEvent("Action"),"Cube");
-//		}
-//	}
+	void Update ()
+	{
+		float horiz = Input.GetAxis ("Horizontal");
+		if (horiz > 0) {
+			ActionEvent VoidEvent = new ActionEvent ("Void");
+			SendAll (new CustomEventMessage (VoidEvent,"Void"));
+		}
+	}
 
 
 	//create the network channel and have get a reference to the custom event stream
 	void Start ()
 	{
 		CES = CustomEventStream.Instance;
-		CES.CreateChannel (DefaultNetworkChannel);
-		CES.Subscribe (NetEventHandler, DefaultNetworkChannel);
+		CES.CreateChannel (DefaultNetworkOutChannel);
+		CES.CreateChannel (DefaultNetworkInChannel);
+		CES.Subscribe (NetEventHandler, DefaultNetworkInChannel);
 
 		Debug.Log ("trying hosting");
 		NetworkConnectionError nce = Host ();
 		if (nce == NetworkConnectionError.CreateSocketOrThreadFailure) {
+			Debug.Log (nce);
 			Debug.Log ("host failed; assuming already exists. connecting");
 			Connect (DefaultIp);
 		} else {
@@ -143,36 +158,51 @@ public class NetworkController : MonoBehaviour
 	}
 
 	/// <summary>
-	/// handles events relevent to the network.
+	/// takes network in messages and sends them to network out
 	/// </summary>
 	/// <param name="ce">event passed in</param>
 	public void NetEventHandler (CustomEvent ce)
 	{
-		if ("Notification".Equals (ce ["Type"])) {
-			if ("Disconnect".Equals (ce ["Notification"])) {
-				
-			}
-		}
+		CustomEventMessage cem = (CustomEventMessage)ce ["Broadcast"];
+		SendAll (cem);
 	}
 
 
 	//send a message to all connected players
-	public void SendAll (CustomEvent evnt, string channel = DefaultNetworkChannel)
+	public void SendAll (CustomEventMessage evnt, string channel = DefaultNetworkOutChannel)
 	{
-		string toSend = CustomEvent.ToString (evnt);
+		System.IO.StringWriter strStream = new System.IO.StringWriter ();
+		xmlSerializer.Serialize (strStream, evnt);
+		strStream.Flush ();
+		strStream.Close ();
+		string toSend = strStream.GetStringBuilder ().ToString ();
+		
+
+		Debug.Log(toSend);
+		
 		networkView.RPC ("NetMessage", RPCMode.All, toSend, channel);
 	}
 	//send a message to all other connected players
-	public void SendOthers (CustomEvent evnt, string channel = DefaultNetworkChannel)
+	public void SendOthers (CustomEventMessage evnt, string channel = DefaultNetworkOutChannel)
 	{
-		string toSend = CustomEvent.ToString (evnt);
+		System.IO.StringWriter strStream = new System.IO.StringWriter ();
+		xmlSerializer.Serialize (strStream, evnt);
+		strStream.Flush ();
+		strStream.Close ();
+		string toSend = strStream.GetStringBuilder ().ToString ();
+
 		networkView.RPC ("NetMessage", RPCMode.Others, toSend, channel);
 	}
-	//network send message
+	//network "Recieve" message
 	[RPC]
 	public void NetMessage (string evnt, string channel)
 	{
-		CustomEvent ce = CustomEvent.FromString (evnt);
+		Debug.Log(evnt);
+
+		System.IO.StringReader strStream = new System.IO.StringReader (evnt);
+		CustomEventMessage CEM = (CustomEventMessage)xmlSerializer.Deserialize (strStream);
+		CustomEvent ce = new NotificationEvent ("NetworkMessage");
+		ce ["NetworkMessage"] = CEM;
 		CES.Broadcast (ce, channel);
 	}
 	#endregion

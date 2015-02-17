@@ -2,9 +2,28 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\CustomEventStream.cs">
     <Files>
-      <File FileName="Assets\Script\NetworkController.cs" Line="43" Column="24" />
-      <File FileName="Assets\Script\CustomEventStream.cs" Line="161" Column="71" />
+      <File FileName="Assets\Script\CustomEventStream.cs" Line="39" Column="2" />
+      <File FileName="Assets\Script\NetworkController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Script\ActionListenerScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Script\DESTINY_CUBE.cs" Line="1" Column="1" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="Assembly-CSharp" expanded="True">
+            <Node name="Script" expanded="True">
+              <Node name="CustomEventStream.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="ClassPad">
+        <State expanded="True" selected="True" />
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State />
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

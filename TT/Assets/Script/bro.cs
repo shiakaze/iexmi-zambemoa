@@ -12,8 +12,8 @@ public class Bro : MonoBehaviour
 {
 	#region private members
 
-	private int op;
-	private int speed;
+	public int op;
+	public int speed;
 	private BroPriorityAttackType pbat;
 	private int id;
 	#endregion

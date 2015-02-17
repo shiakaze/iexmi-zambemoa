@@ -3,8 +3,40 @@ using System.Text;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CustomEvent : Dictionary<string, object>
+[Serializable]
+public class CustomEvent
 {
+	public object this [string key] {
+		get {
+			foreach (KeyValuePair<string,object> kvp in kvplist) {
+				if (key.Equals (kvp.Key)) {
+					return kvp.Value;
+				}
+			}
+			return null;
+		}
+		set {
+			KeyValuePair<string,object> existingkvp = new KeyValuePair<string, object> (null, null);
+			foreach (KeyValuePair<string,object> kvp in kvplist) {
+				if (key.Equals (kvp.Key)) {
+					existingkvp = kvp;
+					break;
+				}
+			}
+			if (existingkvp.Key != null) {
+				kvplist.Remove (existingkvp);
+			}
+			kvplist.Add (new KeyValuePair<string, object> (key, value));
+		}
+	}
+	
+	public IEnumerator<KeyValuePair<string,object>> GetEnumerator ()
+	{
+		return kvplist.GetEnumerator ();
+	}
+
+	public List<KeyValuePair<string,object>> kvplist = new List<KeyValuePair<string,object>> ();
+
 	public string Type {
 		get {
 			return (string)this ["Type"];
@@ -14,69 +46,38 @@ public class CustomEvent : Dictionary<string, object>
 		}
 	}
 
+	public CustomEvent ()
+	{
+		Type = "EVENT";
+	}
+
 	public CustomEvent (string type)
 	{
 		Type = type;
 	}
 
+	public bool ContainsKey (string key)
+	{
+		foreach (KeyValuePair<string, object> kvp in kvplist) {
+			if (key.Equals (kvp.Key)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public bool Contains (params string[] keys)
 	{
-		for (int i = 0, max = keys.Length; i < max; ++i) {
-			if (this.ContainsKey (keys [i]) == false) {
+		for (int i = 0, max = keys.Length; i < max; ++i) {	
+			if (!this.ContainsKey (keys [i])) {
 				return false;
 			}
 		}
 		return true;
 	}
-	/// <summary>
-	/// convert the string to a custom event.
-	/// </summary>
-	/// <returns>The custom event.</returns>
-	/// <param name="str">string to convert.</param>
-	public static CustomEvent FromString (string str)
-	{
-		int strindex = 0;
-		char now = str [strindex];
-		StringBuilder sb = new StringBuilder ();
-		CustomEvent ce = new CustomEvent ("Unknown");
-		string key = null;
-
-		while (now != ']') {
-			if (now == ';') {
-				ce [key] = sb.ToString ();
-				sb = new StringBuilder ();
-			} else if (now == ':') {
-				key = sb.ToString ();
-				sb = new StringBuilder ();
-			} else {
-				sb.Append (str [strindex]);
-			}
-			now = str [++strindex];
-		}
-		return ce;
-	}
-	/// <summary>
-	/// Connvert the event to a string
-	/// : to split key value pair
-	/// ; to denotate the end of the key value pair
-	/// ] to denotate the end of the string
-	/// </summary>
-	/// <returns>The string in the format of "key:value;key:value]"</returns>
-	/// <param name="ce">custom event to convert.</param>
-	public static string ToString (CustomEvent ce)
-	{
-		StringBuilder sb = new StringBuilder ();
-		foreach (KeyValuePair<string,object>kvp in ce) {
-			sb.Append (kvp.Key);
-			sb.Append (':');
-			sb.Append (kvp.Value);
-			sb.Append (';');
-		}
-		sb.Append ("]");
-		return sb.ToString ();
-	}
 }
 
+[Serializable]
 public class ActionEvent : CustomEvent
 {
 	public string Action {
@@ -93,8 +94,10 @@ public class ActionEvent : CustomEvent
 	{
 		Action = action;
 	}
+	public ActionEvent():base("Action"){Action = "ACTION";}
 }
 
+[Serializable]
 public class NotificationEvent : CustomEvent
 {
 	public string Notification {
@@ -111,13 +114,36 @@ public class NotificationEvent : CustomEvent
 	{
 		Notification = notification;
 	}
+	public NotificationEvent():base("Notification"){Notification = "NOTIFICATION";}
+}
+
+[Serializable]
+public class CustomEventMessage
+{
+	public CustomEvent content;
+	public string channelName;
+
+	public CustomEventMessage (CustomEvent content, string channelName)
+	{
+		this.content = content;
+		this.channelName = channelName;
+	}
+
+	public CustomEventMessage ()
+	{
+		content = new CustomEvent();
+		channelName = "";
+	}
 }
 
 public delegate void CustomEventHandler (CustomEvent evnt);
 
+public delegate void CustomEventMessageHandler (CustomEventMessage evnt);
+
 public class CustomEventStream : MonoBehaviour
 {
 	public static CustomEventStream Instance;
+	private CustomEventMessageHandler SpyNetwork;
 	public bool LogEvents = true;
 	private Dictionary<string, CustomEventHandler> Channels;
 	private const string DefaultChannel = "Main";
@@ -143,7 +169,7 @@ public class CustomEventStream : MonoBehaviour
 
 	private void MainEventHandler (CustomEvent evnt)
 	{
-		CustomEvent.Enumerator enumerator = evnt.GetEnumerator ();
+		IEnumerator<KeyValuePair<string,object>> enumerator = evnt.GetEnumerator ();
 
 		StringBuilder builder = new StringBuilder ();
 		while (enumerator.MoveNext()) {
@@ -165,6 +191,10 @@ public class CustomEventStream : MonoBehaviour
 			throw new UnityException ("EventStream does not contain channel " + channelName);
 		}
 #endif
+		if (SpyNetwork != null) {
+			SpyNetwork (new CustomEventMessage (evnt, channelName));
+		}
+
 		if (Channels [channelName] != null) {
 			Channels [channelName] (evnt);
 		}
@@ -197,6 +227,11 @@ public class CustomEventStream : MonoBehaviour
 		}
 	}
 
+	public void Spy (CustomEventMessageHandler handler)
+	{
+		SpyNetwork += handler;
+	}
+
 	public bool Unsubscribe (CustomEventHandler handler, string channelName = DefaultChannel)
 	{
 		bool result = (Channels.ContainsKey (channelName));
@@ -212,6 +247,7 @@ public class CustomEventStream : MonoBehaviour
 			Channels [name] = null;
 		}
 	}
+
 	public void CloseChannel (string name)
 	{
 		if (Channels.ContainsKey (name)) {
